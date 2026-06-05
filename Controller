@@ -1,0 +1,50 @@
+package com.fakenews.controller;
+
+import com.fakenews.model.News;
+import com.fakenews.service.NewsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+public class NewsController {
+
+    @Autowired
+    private NewsService service;
+
+    // READ all
+    @GetMapping("/")
+    public String home(Model model) {
+        model.addAttribute("newsList", service.getAllNews());
+        return "index";
+    }
+
+    // CREATE form
+    @GetMapping("/add")
+    public String addForm(Model model) {
+        model.addAttribute("news", new News());
+        return "add-news";
+    }
+
+    // SAVE
+    @PostMapping("/save")
+    public String save(@ModelAttribute News news) {
+        service.saveNews(news);
+        return "redirect:/";
+    }
+
+    // EDIT
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable Long id, Model model) {
+        model.addAttribute("news", service.getById(id));
+        return "edit-news";
+    }
+
+    // DELETE
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        service.deleteNews(id);
+        return "redirect:/";
+    }
+}
